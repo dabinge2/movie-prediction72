@@ -14,7 +14,7 @@ import time
 app = Flask(__name__)
 app.config.from_object(Config)
 socketio = SocketIO(app)
-
+print("【DEBUG】用户正在尝试登录...")
 # Initialize Spark
 spark = SparkSession.builder \
     .appName("MovieAnalysis") \
