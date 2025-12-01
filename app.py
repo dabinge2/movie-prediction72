@@ -9,7 +9,6 @@ from spark_jobs.task3_processing import StreamingProcessor
 import threading
 import time
 
-# FEATURE/TASK1 BRANCH: Enhanced version
 app = Flask(__name__)
 app.config.from_object(Config)
 socketio = SocketIO(app)
