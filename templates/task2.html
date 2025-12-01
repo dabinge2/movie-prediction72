@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Task 2 - Movie Tag Analysis</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.3.2/dist/echarts.min.js"></script>
+    <script src="../static/charts.js"></script>
+</head>
+<body>
+    <h1>Movie Tag Popularity by Gender</h1>
+
+    <div id="maleChart" style="width: 600px;height:400px;"></div>
+    <div id="femaleChart" style="width: 600px;height:400px;"></div>
+
+    <script>
+        // Initialize charts
+        const maleChart = echarts.init(document.getElementById('maleChart'));
+        const femaleChart = echarts.init(document.getElementById('femaleChart'));
+
+        // Data from Flask
+        const data = {{ data|tojson }};
+
+        // Set up male chart
+        maleChart.setOption({
+            title: { text: 'Top Tags - Male Users' },
+            tooltip: {},
+            xAxis: { data: data.male.map(item => item.tag) },
+            yAxis: {},
+            series: [{
+                name: 'Count',
+                type: 'bar',
+                data: data.male.map(item => item.count)
+            }]
+        });
+
+        // Set up female chart
+        femaleChart.setOption({
+            title: { text: 'Top Tags - Female Users' },
+            tooltip: {},
+            xAxis: { data: data.female.map(item => item.tag) },
+            yAxis: {},
+            series: [{
+                name: 'Count',
+                type: 'bar',
+                data: data.female.map(item => item.count)
+            }]
+        });
+    </script>
+</body>
+</html>

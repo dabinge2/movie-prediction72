@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Real-time Rating Analysis</h2>
+    
+    <div class="controls">
+        <button id="simulateBtn">Simulate Ratings</button>
+    </div>
+    
+    <div class="chart-container">
+        <div id="ratingChart" style="width: 800px; height: 500px;"></div>
+    </div>
+    
+    <div class="stats">
+        <h3>Current Statistics</h3>
+        <table>
+            <tr>
+                <th>Time</th>
+                <td id="time">-</td>
+            </tr>
+            <tr>
+                <th>Count</th>
+                <td id="count">0</td>
+            </tr>
+            <tr>
+                <th>Average</th>
+                <td id="avg">0.00</td>
+            </tr>
+            <tr>
+                <th>Min</th>
+                <td id="min">0.00</td>
+            </tr>
+            <tr>
+                <th>Max</th>
+                <td id="max">0.00</td>
+            </tr>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/streaming.js') }}"></script>
+<script>
+    // Initialize chart
+    const chart = echarts.init(document.getElementById('ratingChart'));
+    
+    // Chart options
+    const option = {
+        title: { text: 'Real-time Rating Analysis' },
+        tooltip: { trigger: 'axis' },
+        legend: { data: ['Average Rating'] },
+        xAxis: { 
+            type: 'category',
+            data: [] 
+        },
+        yAxis: { 
+            type: 'value',
+            min: 0,
+            max: 5
+        },
+        series: [{
+            name: 'Average Rating',
+            type: 'line',
+            data: [],
+            smooth: true
+        }]
+    };
+    
+    chart.setOption(option);
+    
+    // Socket.IO connection
+    const socket = io();
+    
+    // Update chart with new data
+    socket.on('stream_update', function(data) {
+        // Update stats table
+        document.getElementById('time').textContent = data.time;
+        document.getElementById('count').textContent = data.count;
+        document.getElementById('avg').textContent = data.avg.toFixed(2);
+        document.getElementById('min').textContent = data.min.toFixed(2);
+        document.getElementById('max').textContent = data.max.toFixed(2);
+        
+        // Update chart
+        const option = chart.getOption();
+        
+        // Add new data point (keep last 20 points)
+        if (option.xAxis[0].data.length >= 20) {
+            option.xAxis[0].data.shift();
+            option.series[0].data.shift();
+        }
+        
+        option.xAxis[0].data.push(data.time);
+        option.series[0].data.push(data.avg);
+        
+        chart.setOption(option);
+    });
+    
+    // Simulate button
+    document.getElementById('simulateBtn').addEventListener('click', function() {
+        fetch("{{ url_for('api.stream_rating') }}", {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                userId: Math.floor(Math.random() * 100) + 1,
+                movieId: Math.floor(Math.random() * 100) + 1,
+                rating: (Math.random() * 4 + 1).toFixed(1)
+            })
+        });
+    });
+</script>
+{% endblock %}

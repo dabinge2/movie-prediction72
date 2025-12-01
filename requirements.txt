@@ -1,0 +1,8 @@
+flask==2.0.1
+pyspark==3.3.0
+flask-mysqldb
+pyhdfs
+mysql-connector-python
+pandas
+pyecharts==1.9.1
+flask-socketio
