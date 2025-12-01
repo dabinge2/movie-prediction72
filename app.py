@@ -8,7 +8,7 @@ from spark_jobs.task2_processing import process_task2
 from spark_jobs.task3_processing import StreamingProcessor
 import threading
 import time
-
+ # MAIN BRANCH - Base version
 app = Flask(__name__)
 app.config.from_object(Config)
 socketio = SocketIO(app)
