@@ -14,7 +14,7 @@ import time
 app = Flask(__name__)
 app.config.from_object(Config)
 socketio = SocketIO(app)
-
+print("【INFO】登录流程已启动...")
 # Initialize Spark
 spark = SparkSession.builder \
     .appName("MovieAnalysis") \
